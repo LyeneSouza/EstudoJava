@@ -1,7 +1,9 @@
 package entidades;
 
+import com.opencsv.exceptions.CsvException;
 import servicos.GerenciamentoProdutosService;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -12,7 +14,7 @@ public class Loja {
     public Loja() {
     }
 
-    public void menuLoja() {
+    public void menuLoja() throws IOException, CsvException {
         Scanner sc = new Scanner(System.in);
 
         System.out.println("---------BEM-VINDO(A)---------");
@@ -66,9 +68,10 @@ public class Loja {
                         }
                     } while (numProduto <= 0 || numProduto > service.getProdutos().size());
 
-                    //service.excluirProduto()
+                    service.excluirProduto(numProduto);
                     break;
                 case 4: // Importar mostruario de fabrica
+                    service.importarMostruario();
                     break;
                 case 5: // Finalizar o aplicativo
                     System.out.println("Aplicativo encerrado.");
