@@ -1,15 +1,18 @@
 package servicos;
 
-import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
+import daos.ProdutoDAO;
 import entidades.Produto;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class GerenciamentoProdutosService {
+
+    private ProdutoDAO dao = new ProdutoDAO();
 
     private List<Produto> produtos = new ArrayList<>();
     private String caminhoAbsoluto;
@@ -22,29 +25,7 @@ public class GerenciamentoProdutosService {
     }
 
     public void atualizarListaProdutos() {
-
-        // Lendo o arquivo .csv e atualizando a lista de produtos conforme arquivo
-        //System.out.print("Para começar, entre com o caminho do arquivo dos produtos da loja: ");
-        //caminhoAbsoluto = sc.nextLine();
-        //caminho = new File(caminhoAbsoluto);
-
-        caminhoAbsoluto = "C:\\Users\\lyene\\OneDrive\\Documentos\\South System\\desafio-qa-modulo2\\produtos.csv";
-        caminho = new File(caminhoAbsoluto);
-
-        try (BufferedReader br = new BufferedReader(new FileReader(caminho))) {
-            String linha = br.readLine();
-            while (linha != null && !linha.equals("")) {
-                String[] prod = linha.split(",");
-                String nome = prod[0];
-                double preco = Double.parseDouble(prod[1]);
-                int qtdEstoque = Integer.parseInt(prod[2]);
-                String categoria = prod[3];
-                produtos.add(new Produto(nome, preco, qtdEstoque, categoria));
-                linha = br.readLine();
-            }
-        } catch (IOException e) {
-            System.out.println("Erro: " + e.getMessage());
-        }
+        produtos = dao.lerProdutos();
     }
 
     public void adicionarProduto(Produto produto) {
@@ -57,25 +38,15 @@ public class GerenciamentoProdutosService {
                 // Adicionando o produto na lista de produtos da loja
                 produtos.add(produto);
                 // Adicionando o produto no .csv
-                try (BufferedWriter bw = new BufferedWriter(new FileWriter(caminho))) {
-                    for (Produto prod : produtos) {
-                        bw.write(prod.getNome() + ","
-                                + String.format("%.2f", prod.getPreco()) + ","
-                                + prod.getQtdEstoque() + ","
-                                + prod.getCategoria());
-                        bw.newLine();
-                    }
-                } catch (IOException e) {
-                    System.out.println("Erro: " + e.getMessage());
-                }
+                dao.salvar(produtos);
                 // Finalizando a inclusao
                 System.out.println("Produto adicionado com sucesso!");
-                mostrarProdutos();
+                mostrarProdutos(produtos);
                 break;
             } else if (confirma == 0) {
                 System.out.println("Inclusão cancelada!");
                 break;
-            } else {
+            } else { // Trocar para try-catch
                 System.out.println("Número inválido.");
             }
         }
@@ -94,20 +65,10 @@ public class GerenciamentoProdutosService {
                 produtos.get(numProduto - 1).setQtdEstoque(produto.getQtdEstoque());
                 produtos.get(numProduto - 1).setCategoria(produto.getCategoria());
                 // Editando o produto no .csv
-                try (BufferedWriter bw = new BufferedWriter(new FileWriter(caminho))) {
-                    for (Produto prod : produtos) {
-                        bw.write(prod.getNome() + ","
-                                + String.format("%.2f", prod.getPreco()) + ","
-                                + prod.getQtdEstoque() + ","
-                                + prod.getCategoria());
-                        bw.newLine();
-                    }
-                } catch (IOException e) {
-                    System.out.println("Erro: " + e.getMessage());
-                }
+                dao.salvar(produtos);
                 // Finalizando a edicao
                 System.out.println("Produto editado com sucesso!");
-                mostrarProdutos();
+                mostrarProdutos(produtos);
                 break;
             } else if (confirma == 0) {
                 System.out.println("Edição cancelada!");
@@ -128,20 +89,10 @@ public class GerenciamentoProdutosService {
                 // Excluindo o produto da lista de produtos da loja
                 produtos.remove(produtos.get(numProduto - 1));
                 // Excluindo o produto do .csv
-                try (BufferedWriter bw = new BufferedWriter(new FileWriter(caminho))) {
-                    for (Produto prod : produtos) {
-                        bw.write(prod.getNome() + ","
-                                + String.format("%.2f", prod.getPreco()) + ","
-                                + prod.getQtdEstoque() + ","
-                                + prod.getCategoria());
-                        bw.newLine();
-                    }
-                } catch (IOException e) {
-                    System.out.println("Erro: " + e.getMessage());
-                }
+                dao.salvar(produtos);
                 // Finalizando a exclusão
                 System.out.println("Produto excluído com sucesso!");
-                mostrarProdutos();
+                mostrarProdutos(produtos);
                 break;
             } else if (confirma == 0) {
                 System.out.println("Exclusão cancelada!");
@@ -159,37 +110,11 @@ public class GerenciamentoProdutosService {
         System.out.print("Para começar, entre com o caminho do arquivo (.csv) do mostruário da fábrica: ");
         String caminhoMostruario = sc.nextLine();
 
-        // Guardando cada linha do arquivo em uma posicao do vetor de Strings
-        List<String[]> linhas;
-        try (CSVReader reader = new CSVReader(new FileReader(caminhoMostruario))) {
-            linhas = reader.readAll();
-        }
-
-        // Adicionando os produtos do arquivo na lista de produtos do mostruario
-        List<Produto> produtosMostruario = new ArrayList<>();
-        for (String[] arrays : linhas) {
-            if (arrays != linhas.get(0)) { // Desconsiderar a primeira linha
-                String nome = arrays[3];
-                String valorBrutoString = arrays[6];
-                String valorBrutoComPonto = valorBrutoString.replace(',', '.');
-                double valorBruto = Double.parseDouble(valorBrutoComPonto);
-                String impostoString = arrays[7];
-                String impostoComPonto = impostoString.replace(",", ".");
-                double imposto = Double.parseDouble(impostoComPonto) / 100;
-                double lucro = 0.45;
-                double preco = valorBruto + (valorBruto * imposto) + (valorBruto * lucro);
-                int qtdEstoque = 0;
-                String categoria = arrays[5];
-                produtosMostruario.add(new Produto(nome, preco, qtdEstoque, categoria));
-            }
-        }
+        List<Produto> produtosMostruario = dao.lerMostruario(caminhoMostruario);
 
         // Imprimindo os produtos do mostruario
-        System.out.println("\n--------PRODUTOS MOSTRUÁRIO--------");
-        for (Produto prod : produtosMostruario) {
-            System.out.println(prod);
-        }
-        System.out.println("----------------------------------");
+        System.out.println("A seguir, confira a lista de produtos do mostrúário:");
+        mostrarProdutos(produtosMostruario);
 
         int confirma = 2;
         while (confirma != 1 || confirma != 0) {
@@ -201,20 +126,10 @@ public class GerenciamentoProdutosService {
                     produtos.add(prod);
                 }
                 // Incluindo os produtos do mostruario no arquivo de produtos da loja
-                try (BufferedWriter bw = new BufferedWriter(new FileWriter(caminho))) {
-                    for (Produto prod : produtos) {
-                        bw.write(prod.getNome() + ","
-                                + String.format("%.2f", prod.getPreco()) + ","
-                                + prod.getQtdEstoque() + ","
-                                + prod.getCategoria());
-                        bw.newLine();
-                    }
-                } catch (IOException e) {
-                    System.out.println("Erro: " + e.getMessage());
-                }
+                dao.salvar(produtos);
                 // Finalizando a importacao
                 System.out.println("Produtos importados com sucesso!");
-                mostrarProdutos();
+                mostrarProdutos(produtos);
                 break;
             } else if (confirma == 0) {
                 System.out.println("Importação cancelada!");
@@ -226,7 +141,7 @@ public class GerenciamentoProdutosService {
 
     }
 
-    public Produto dadosProduto() {
+    public Produto receberDadosProduto() {
 
         sc.nextLine(); // Esse nextLine so e necessario para absorver quebra pendente a partir da segunda execucao. Na primeira execucao ele fica sobrando
         System.out.print("Nome: ");
@@ -243,9 +158,9 @@ public class GerenciamentoProdutosService {
         return produto;
     }
 
-    public void mostrarProdutos() {
+    public void mostrarProdutos(List<Produto> produtos) {
 
-        // Imprimindo os produtos do arquivo
+        // Imprimindo os produtos da lista
         System.out.println("\n--------PRODUTOS--------");
         int contador = 1;
         for (Produto prod : produtos) {

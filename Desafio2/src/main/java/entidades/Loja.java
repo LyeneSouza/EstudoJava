@@ -35,11 +35,11 @@ public class Loja {
             switch (opcao) {
                 case 1: // Adicionar produto
                     System.out.println("ENTRE COM OS DADOS DO PRODUTO A SER ADICIONADO");
-                    Produto produto = service.dadosProduto();
+                    Produto produto = service.receberDadosProduto();
                     service.adicionarProduto(produto);
                     break;
                 case 2: // Editar produto
-                    service.mostrarProdutos();
+                    service.mostrarProdutos(service.getProdutos());
 
                     int numProduto = 0;
                     do {
@@ -51,11 +51,11 @@ public class Loja {
                     } while (numProduto <= 0 || numProduto > service.getProdutos().size());
 
                     System.out.println("ENTRE COM OS NOVOS DADOS PARA O PRODUTO " + numProduto);
-                    produto = service.dadosProduto();
+                    produto = service.receberDadosProduto();
                     service.editarProduto(numProduto, produto);
                     break;
                 case 3: // Excluir produto
-                    service.mostrarProdutos();
+                    service.mostrarProdutos(service.getProdutos());
                     if (service.getProdutos().size() == 1) { // Mudar para try-catch
                         System.out.println("Há apenas um produto na lista. Não é possível excluir!");
                     } else {
