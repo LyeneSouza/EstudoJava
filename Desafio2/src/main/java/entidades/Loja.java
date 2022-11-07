@@ -4,8 +4,6 @@ import com.opencsv.exceptions.CsvException;
 import servicos.GerenciamentoProdutosService;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class Loja {
@@ -58,17 +56,20 @@ public class Loja {
                     break;
                 case 3: // Excluir produto
                     service.mostrarProdutos();
+                    if (service.getProdutos().size() == 1) { // Mudar para try-catch
+                        System.out.println("Há apenas um produto na lista. Não é possível excluir!");
+                    } else {
+                        numProduto = 0;
+                        do {
+                            System.out.print("QUAL O NÚMERO DO PRODUTO QUE DESEJA EXCLUIR? ");
+                            numProduto = sc.nextInt();
+                            if (numProduto <= 0 || numProduto > service.getProdutos().size()) {
+                                System.out.println("Produto não encontrado.");
+                            }
+                        } while (numProduto <= 0 || numProduto > service.getProdutos().size());
 
-                    numProduto = 0;
-                    do {
-                        System.out.print("QUAL O NÚMERO DO PRODUTO QUE DESEJA EXCLUIR? ");
-                        numProduto = sc.nextInt();
-                        if (numProduto <= 0 || numProduto > service.getProdutos().size()) {
-                            System.out.println("Produto não encontrado.");
-                        }
-                    } while (numProduto <= 0 || numProduto > service.getProdutos().size());
-
-                    service.excluirProduto(numProduto);
+                        service.excluirProduto(numProduto);
+                    }
                     break;
                 case 4: // Importar mostruario de fabrica
                     service.importarMostruario();
