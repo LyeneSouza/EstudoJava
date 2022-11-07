@@ -6,16 +6,16 @@ import org.junit.Test;
 
 import static builders.ProdutoBuilder.umProduto;
 
-public class GerenciamentoProdutosServiceTest {
+public class ProdutoServiceTest {
 
-    private GerenciamentoProdutosService service;
+    private ProdutoService service;
     private Loja loja;
 
     @Test
     public void deveAdicionarProdutoComSucesso() {
 
         // Cenario
-        service = new GerenciamentoProdutosService();
+        service = new ProdutoService();
         loja = new Loja();
         Produto produto = umProduto().agora();
 

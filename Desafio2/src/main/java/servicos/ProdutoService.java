@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class GerenciamentoProdutosService {
+public class ProdutoService {
 
     private ProdutoDAO dao = new ProdutoDAO();
 
@@ -33,7 +33,7 @@ public class GerenciamentoProdutosService {
         int confirma = 2;
         while (confirma != 1 || confirma != 0) {
             System.out.println("Confirma a inclusão do produto '" + produto + "'? Digite 1 para confirmar ou 0 para cancelar.");
-            confirma = sc.nextInt();
+            confirma = Integer.parseInt(sc.nextLine());
             if (confirma == 1) {
                 // Adicionando o produto na lista de produtos da loja
                 produtos.add(produto);
@@ -52,12 +52,12 @@ public class GerenciamentoProdutosService {
         }
     }
 
-    public void editarProduto(int numProduto, Produto produto) {
+    public void editarProduto(int numProduto, Produto produto) { // Verificar se o numProduto eh valido
 
         int confirma = 2;
         while (confirma != 1 || confirma != 0) {
             System.out.println("Confirma a edição do produto " + numProduto + "? Digite 1 para confirmar ou 0 para cancelar.");
-            confirma = sc.nextInt();
+            confirma = Integer.parseInt(sc.nextLine());
             if (confirma == 1) {
                 // Editando o produto na lista de produtos da loja
                 produtos.get(numProduto - 1).setNome(produto.getNome());
@@ -79,12 +79,12 @@ public class GerenciamentoProdutosService {
         }
     }
 
-    public void excluirProduto(int numProduto) {
+    public void excluirProduto(int numProduto) { // Verificar se o numProduto eh valido
 
         int confirma = 2;
         while (confirma != 1 || confirma != 0) {
             System.out.println("Confirma a exclusão do produto " + numProduto + "? Digite 1 para confirmar ou 0 para cancelar.");
-            confirma = sc.nextInt();
+            confirma = Integer.parseInt(sc.nextLine());
             if (confirma == 1) {
                 // Excluindo o produto da lista de produtos da loja
                 produtos.remove(produtos.get(numProduto - 1));
@@ -106,7 +106,6 @@ public class GerenciamentoProdutosService {
     public void importarMostruario() throws IOException, CsvException {
 
         // Solicitando o arquivo .csv ao usuario
-        sc.nextLine(); // Esse nextLine so e necessario para absorver quebra pendente a partir da segunda execucao. Na primeira execucao ele fica sobrando
         System.out.print("Para começar, entre com o caminho do arquivo (.csv) do mostruário da fábrica: ");
         String caminhoMostruario = sc.nextLine();
 
@@ -119,7 +118,7 @@ public class GerenciamentoProdutosService {
         int confirma = 2;
         while (confirma != 1 || confirma != 0) {
             System.out.println("Confirma a importação dos produtos do mostruário? Digite 1 para confirmar ou 0 para cancelar.");
-            confirma = sc.nextInt();
+            confirma = Integer.parseInt(sc.nextLine());
             if (confirma == 1) {
                 // Incluindo os produtos do mostruario na lista de produtos da loja
                 for (Produto prod : produtosMostruario) {
@@ -138,24 +137,6 @@ public class GerenciamentoProdutosService {
                 System.out.println("Número inválido.");
             }
         }
-
-    }
-
-    public Produto receberDadosProduto() {
-
-        sc.nextLine(); // Esse nextLine so e necessario para absorver quebra pendente a partir da segunda execucao. Na primeira execucao ele fica sobrando
-        System.out.print("Nome: ");
-        String nome = sc.nextLine();
-        System.out.print("Preço: ");
-        double preco = sc.nextDouble();
-        System.out.print("Quantidade em estoque: ");
-        int qtdEstoque = sc.nextInt();
-        System.out.print("Categoria: ");
-        sc.nextLine();
-        String categoria = sc.nextLine();
-
-        Produto produto = new Produto(nome, preco, qtdEstoque, categoria);
-        return produto;
     }
 
     public void mostrarProdutos(List<Produto> produtos) {

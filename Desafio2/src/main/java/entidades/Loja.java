@@ -1,15 +1,31 @@
 package entidades;
 
 import com.opencsv.exceptions.CsvException;
-import servicos.GerenciamentoProdutosService;
+import servicos.ProdutoService;
 
 import java.io.IOException;
 import java.util.Scanner;
 
 public class Loja {
-    private GerenciamentoProdutosService service = new GerenciamentoProdutosService();
+    private ProdutoService service = new ProdutoService();
 
     public Loja() {
+    }
+
+    public static Produto receberDadosProduto() {
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Nome: ");
+        String nome = sc.nextLine();
+        System.out.print("Preço: ");
+        double preco = Double.parseDouble(sc.nextLine());
+        System.out.print("Quantidade em estoque: ");
+        int qtdEstoque = Integer.parseInt(sc.nextLine());
+        System.out.print("Categoria: ");
+        String categoria = sc.nextLine();
+
+        return new Produto(nome, preco, qtdEstoque, categoria);
     }
 
     public void menuLoja() throws IOException, CsvException {
@@ -30,13 +46,12 @@ public class Loja {
                     "5- Sair");
             System.out.println("----------------------");
             System.out.print("\nSelecione a opção que deseja: ");
-            opcao = sc.nextInt();
+            opcao = Integer.parseInt(sc.nextLine());
 
             switch (opcao) {
                 case 1: // Adicionar produto
                     System.out.println("ENTRE COM OS DADOS DO PRODUTO A SER ADICIONADO");
-                    Produto produto = service.receberDadosProduto();
-                    service.adicionarProduto(produto);
+                    service.adicionarProduto(receberDadosProduto());
                     break;
                 case 2: // Editar produto
                     service.mostrarProdutos(service.getProdutos());
@@ -44,15 +59,14 @@ public class Loja {
                     int numProduto = 0;
                     do {
                         System.out.print("QUAL O NÚMERO DO PRODUTO QUE DESEJA EDITAR? ");
-                        numProduto = sc.nextInt();
+                        numProduto = Integer.parseInt(sc.nextLine());
                         if (numProduto <= 0 || numProduto > service.getProdutos().size()) {
                             System.out.println("Produto não encontrado.");
                         }
                     } while (numProduto <= 0 || numProduto > service.getProdutos().size());
 
                     System.out.println("ENTRE COM OS NOVOS DADOS PARA O PRODUTO " + numProduto);
-                    produto = service.receberDadosProduto();
-                    service.editarProduto(numProduto, produto);
+                    service.editarProduto(numProduto, receberDadosProduto());
                     break;
                 case 3: // Excluir produto
                     service.mostrarProdutos(service.getProdutos());
@@ -62,7 +76,7 @@ public class Loja {
                         numProduto = 0;
                         do {
                             System.out.print("QUAL O NÚMERO DO PRODUTO QUE DESEJA EXCLUIR? ");
-                            numProduto = sc.nextInt();
+                            numProduto = Integer.parseInt(sc.nextLine());
                             if (numProduto <= 0 || numProduto > service.getProdutos().size()) {
                                 System.out.println("Produto não encontrado.");
                             }
