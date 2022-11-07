@@ -60,7 +60,7 @@ public class ProdutoDAO implements ProdutoDAOInterface {
     }
 
     @Override
-    public List<Produto> lerProdutos() {
+    public List<Produto> lerProdutos() throws IOException {
 
         List<Produto> produtosDAO = new ArrayList<>();
 
@@ -75,8 +75,6 @@ public class ProdutoDAO implements ProdutoDAOInterface {
                 produtosDAO.add(new Produto(nome, preco, qtdEstoque, categoria));
                 linha = br.readLine();
             }
-        } catch (IOException e) {
-            System.out.println("Erro: " + e.getMessage());
         }
         return produtosDAO;
     }

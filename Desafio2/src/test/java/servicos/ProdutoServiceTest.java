@@ -2,6 +2,7 @@ package servicos;
 
 import entidades.Loja;
 import entidades.Produto;
+import exceptions.AdicionarProdutoException;
 import org.junit.Test;
 
 import static builders.ProdutoBuilder.umProduto;
@@ -12,7 +13,7 @@ public class ProdutoServiceTest {
     private Loja loja;
 
     @Test
-    public void deveAdicionarProdutoComSucesso() {
+    public void deveAdicionarProdutoComSucesso() throws AdicionarProdutoException {
 
         // Cenario
         service = new ProdutoService();

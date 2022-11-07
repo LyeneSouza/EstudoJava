@@ -3,6 +3,7 @@ package daos;
 import com.opencsv.exceptions.CsvException;
 import entidades.Produto;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -12,5 +13,5 @@ public interface ProdutoDAOInterface {
 
     public List<Produto> lerMostruario(String caminho) throws IOException, CsvException;
 
-    public List<Produto> lerProdutos();
+    public List<Produto> lerProdutos() throws IOException;
 }

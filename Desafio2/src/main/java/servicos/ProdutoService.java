@@ -3,6 +3,9 @@ package servicos;
 import com.opencsv.exceptions.CsvException;
 import daos.ProdutoDAO;
 import entidades.Produto;
+import exceptions.AdicionarProdutoException;
+import exceptions.AtualizarListaProdutosException;
+import exceptions.EditarProdutoException;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,58 +27,78 @@ public class ProdutoService {
         return produtos;
     }
 
-    public void atualizarListaProdutos() {
-        produtos = dao.lerProdutos();
-    }
-
-    public void adicionarProduto(Produto produto) {
-
-        int confirma = 2;
-        while (confirma != 1 || confirma != 0) {
-            System.out.println("Confirma a inclusão do produto '" + produto + "'? Digite 1 para confirmar ou 0 para cancelar.");
-            confirma = Integer.parseInt(sc.nextLine());
-            if (confirma == 1) {
-                // Adicionando o produto na lista de produtos da loja
-                produtos.add(produto);
-                // Adicionando o produto no .csv
-                dao.salvar(produtos);
-                // Finalizando a inclusao
-                System.out.println("Produto adicionado com sucesso!");
-                mostrarProdutos(produtos);
-                break;
-            } else if (confirma == 0) {
-                System.out.println("Inclusão cancelada!");
-                break;
-            } else { // Trocar para try-catch
-                System.out.println("Número inválido.");
-            }
+    public void atualizarListaProdutos() throws AtualizarListaProdutosException {
+        try {
+            produtos = dao.lerProdutos();
+        } catch (Exception e) {
+            throw new AtualizarListaProdutosException();
         }
     }
 
-    public void editarProduto(int numProduto, Produto produto) { // Verificar se o numProduto eh valido
+    public void adicionarProduto(Produto produto) throws AdicionarProdutoException {
 
-        int confirma = 2;
-        while (confirma != 1 || confirma != 0) {
-            System.out.println("Confirma a edição do produto " + numProduto + "? Digite 1 para confirmar ou 0 para cancelar.");
-            confirma = Integer.parseInt(sc.nextLine());
-            if (confirma == 1) {
-                // Editando o produto na lista de produtos da loja
-                produtos.get(numProduto - 1).setNome(produto.getNome());
-                produtos.get(numProduto - 1).setPreco(produto.getPreco());
-                produtos.get(numProduto - 1).setQtdEstoque(produto.getQtdEstoque());
-                produtos.get(numProduto - 1).setCategoria(produto.getCategoria());
-                // Editando o produto no .csv
-                dao.salvar(produtos);
-                // Finalizando a edicao
-                System.out.println("Produto editado com sucesso!");
-                mostrarProdutos(produtos);
-                break;
-            } else if (confirma == 0) {
-                System.out.println("Edição cancelada!");
-                break;
-            } else { // Mudar para try-catch
-                System.out.println("Número inválido.");
+        if (produto == null) {
+            throw new AdicionarProdutoException();
+        }
+
+        try {
+            int confirma = 2;
+            while (confirma != 1 || confirma != 0) {
+                System.out.println("Confirma a inclusão do produto '" + produto + "'? Digite 1 para confirmar ou 0 para cancelar.");
+                confirma = Integer.parseInt(sc.nextLine());
+                if (confirma == 1) {
+                    // Adicionando o produto na lista de produtos da loja
+                    produtos.add(produto);
+                    // Adicionando o produto no .csv
+                    dao.salvar(produtos);
+                    // Finalizando a inclusao
+                    System.out.println("Produto adicionado com sucesso!");
+                    mostrarProdutos(produtos);
+                    break;
+                } else if (confirma == 0) {
+                    System.out.println("Inclusão cancelada!");
+                    break;
+                } else { // Trocar para try-catch
+                    System.out.println("Número inválido.");
+                }
             }
+        } catch (Exception e) {
+            throw new AdicionarProdutoException();
+        }
+    }
+
+    public void editarProduto(int numProduto, Produto produto) throws EditarProdutoException {
+
+        if (produto == null || numProduto <= 0 || numProduto > getProdutos().size()) {
+            throw new EditarProdutoException();
+        }
+
+        try {
+            int confirma = 2;
+            while (confirma != 1 || confirma != 0) {
+                System.out.println("Confirma a edição do produto " + numProduto + "? Digite 1 para confirmar ou 0 para cancelar.");
+                confirma = Integer.parseInt(sc.nextLine());
+                if (confirma == 1) {
+                    // Editando o produto na lista de produtos da loja
+                    produtos.get(numProduto - 1).setNome(produto.getNome());
+                    produtos.get(numProduto - 1).setPreco(produto.getPreco());
+                    produtos.get(numProduto - 1).setQtdEstoque(produto.getQtdEstoque());
+                    produtos.get(numProduto - 1).setCategoria(produto.getCategoria());
+                    // Editando o produto no .csv
+                    dao.salvar(produtos);
+                    // Finalizando a edicao
+                    System.out.println("Produto editado com sucesso!");
+                    mostrarProdutos(produtos);
+                    break;
+                } else if (confirma == 0) {
+                    System.out.println("Edição cancelada!");
+                    break;
+                } else { // Mudar para try-catch
+                    System.out.println("Número inválido.");
+                }
+            }
+        } catch (Exception e) {
+            throw new EditarProdutoException();
         }
     }
 
