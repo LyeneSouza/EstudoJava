@@ -3,163 +3,125 @@ package servicos;
 import com.opencsv.exceptions.CsvException;
 import daos.ProdutoDAO;
 import entidades.Produto;
-import exceptions.AdicionarProdutoException;
-import exceptions.AtualizarListaProdutosException;
-import exceptions.EditarProdutoException;
+import exceptions.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class ProdutoService {
 
     private ProdutoDAO dao = new ProdutoDAO();
 
     private List<Produto> produtos = new ArrayList<>();
-    private String caminhoAbsoluto;
-    private File caminho;
 
-    Scanner sc = new Scanner(System.in);
-
-    public List<Produto> getProdutos() {
-        return produtos;
-    }
-
-    public void atualizarListaProdutos() throws AtualizarListaProdutosException {
+    public void atualizarListaProdutos() throws Exception {
         try {
             produtos = dao.lerProdutos();
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new AtualizarListaProdutosException();
+        } catch (Exception e) {
+            throw e;
         }
     }
 
-    public void adicionarProduto(Produto produto) throws AdicionarProdutoException {
+    public void adicionarProduto(Produto produto) throws Exception {
 
         if (produto == null) {
-            throw new AdicionarProdutoException();
+            throw new AdicionarProdutoException("Produto inválido.");
         }
 
         try {
-            int confirma = 2;
-            while (confirma != 1 || confirma != 0) {
-                System.out.println("Confirma a inclusão do produto '" + produto + "'? Digite 1 para confirmar ou 0 para cancelar.");
-                confirma = Integer.parseInt(sc.nextLine());
-                if (confirma == 1) {
-                    // Adicionando o produto na lista de produtos da loja
-                    produtos.add(produto);
-                    // Adicionando o produto no .csv
-                    dao.salvar(produtos);
-                    // Finalizando a inclusao
-                    System.out.println("Produto adicionado com sucesso!");
-                    mostrarProdutos(produtos);
-                    break;
-                } else if (confirma == 0) {
-                    System.out.println("Inclusão cancelada!");
-                    break;
-                } else { // Trocar para try-catch
-                    System.out.println("Número inválido.");
-                }
-            }
+            // Adicionando o produto na lista de produtos da loja
+            produtos.add(produto);
+            // Adicionando o produto no .csv
+            dao.salvar(produtos);
+            // Finalizando a inclusao
+            System.out.println("Produto adicionado com sucesso!");
+            mostrarProdutos();
+        } catch (IOException e) {
+            throw new AdicionarProdutoException("Não foi possível adicionar o produto. Erro ao salvar no arquivo.");
         } catch (Exception e) {
-            throw new AdicionarProdutoException();
+            throw e;
         }
     }
 
-    public void editarProduto(int numProduto, Produto produto) throws EditarProdutoException {
+    public void editarProduto(int numProduto, Produto produto) throws Exception {
 
-        if (produto == null || numProduto <= 0 || numProduto > getProdutos().size()) {
-            throw new EditarProdutoException();
+        if (produto == null || numProduto <= 0 || numProduto > produtos.size()) {
+            throw new EditarProdutoException("Produto inválido.");
         }
 
         try {
-            int confirma = 2;
-            while (confirma != 1 || confirma != 0) {
-                System.out.println("Confirma a edição do produto " + numProduto + "? Digite 1 para confirmar ou 0 para cancelar.");
-                confirma = Integer.parseInt(sc.nextLine());
-                if (confirma == 1) {
-                    // Editando o produto na lista de produtos da loja
-                    produtos.get(numProduto - 1).setNome(produto.getNome());
-                    produtos.get(numProduto - 1).setPreco(produto.getPreco());
-                    produtos.get(numProduto - 1).setQtdEstoque(produto.getQtdEstoque());
-                    produtos.get(numProduto - 1).setCategoria(produto.getCategoria());
-                    // Editando o produto no .csv
-                    dao.salvar(produtos);
-                    // Finalizando a edicao
-                    System.out.println("Produto editado com sucesso!");
-                    mostrarProdutos(produtos);
-                    break;
-                } else if (confirma == 0) {
-                    System.out.println("Edição cancelada!");
-                    break;
-                } else { // Mudar para try-catch
-                    System.out.println("Número inválido.");
-                }
-            }
+            // Editando o produto na lista de produtos da loja
+            produtos.get(numProduto - 1).setNome(produto.getNome());
+            produtos.get(numProduto - 1).setPreco(produto.getPreco());
+            produtos.get(numProduto - 1).setQtdEstoque(produto.getQtdEstoque());
+            produtos.get(numProduto - 1).setCategoria(produto.getCategoria());
+            // Editando o produto no .csv
+            dao.salvar(produtos);
+            // Finalizando a edicao
+            System.out.println("Produto editado com sucesso!");
+            mostrarProdutos();
+        } catch (IOException e) {
+            throw new EditarProdutoException("Não foi possível editar o produto. Erro ao salvar no arquivo.");
         } catch (Exception e) {
-            throw new EditarProdutoException();
+            throw e;
         }
     }
 
-    public void excluirProduto(int numProduto) { // Verificar se o numProduto eh valido
+    public void excluirProduto(int numProduto) throws Exception {
 
-        int confirma = 2;
-        while (confirma != 1 || confirma != 0) {
-            System.out.println("Confirma a exclusão do produto " + numProduto + "? Digite 1 para confirmar ou 0 para cancelar.");
-            confirma = Integer.parseInt(sc.nextLine());
-            if (confirma == 1) {
-                // Excluindo o produto da lista de produtos da loja
-                produtos.remove(produtos.get(numProduto - 1));
-                // Excluindo o produto do .csv
-                dao.salvar(produtos);
-                // Finalizando a exclusão
-                System.out.println("Produto excluído com sucesso!");
-                mostrarProdutos(produtos);
-                break;
-            } else if (confirma == 0) {
-                System.out.println("Exclusão cancelada!");
-                break;
-            } else { // Mudar para try-catch
-                System.out.println("Número inválido.");
-            }
+        if (numProduto <= 0 || numProduto > produtos.size()) {
+            throw new ExcluirProdutoException("Produto inválido.");
+        }
+
+        try {
+            // Excluindo o produto da lista de produtos da loja
+            produtos.remove(produtos.get(numProduto - 1));
+            // Excluindo o produto do .csv
+            dao.salvar(produtos);
+            // Finalizando a exclusão
+            System.out.println("Produto excluído com sucesso!");
+            mostrarProdutos();
+        } catch (IOException e) {
+            throw new ExcluirProdutoException("Não foi possível excluir o produto. Erro ao salvar no arquivo.");
+        } catch (Exception e) {
+            throw e;
         }
     }
 
-    public void importarMostruario() throws IOException, CsvException {
-
-        // Solicitando o arquivo .csv ao usuario
-        System.out.print("Para começar, entre com o caminho do arquivo (.csv) do mostruário da fábrica: ");
-        String caminhoMostruario = sc.nextLine();
-
-        List<Produto> produtosMostruario = dao.lerMostruario(caminhoMostruario);
-
-        // Imprimindo os produtos do mostruario
-        System.out.println("A seguir, confira a lista de produtos do mostrúário:");
-        mostrarProdutos(produtosMostruario);
-
-        int confirma = 2;
-        while (confirma != 1 || confirma != 0) {
-            System.out.println("Confirma a importação dos produtos do mostruário? Digite 1 para confirmar ou 0 para cancelar.");
-            confirma = Integer.parseInt(sc.nextLine());
-            if (confirma == 1) {
-                // Incluindo os produtos do mostruario na lista de produtos da loja
-                for (Produto prod : produtosMostruario) {
-                    produtos.add(prod);
-                }
-                // Incluindo os produtos do mostruario no arquivo de produtos da loja
-                dao.salvar(produtos);
-                // Finalizando a importacao
-                System.out.println("Produtos importados com sucesso!");
-                mostrarProdutos(produtos);
-                break;
-            } else if (confirma == 0) {
-                System.out.println("Importação cancelada!");
-                break;
-            } else { // Mudar para try-catch
-                System.out.println("Número inválido.");
-            }
+    public List<Produto> lerMostruario(String caminhoMostruario) throws Exception {
+        try {
+            return dao.lerMostruario(caminhoMostruario);
+        } catch (IOException | CsvException e) {
+            throw new LerMostruarioException();
+        } catch (Exception e) {
+            throw e;
         }
+    }
+
+    public void importarMostruario(List<Produto> produtosMostruario) throws Exception {
+
+        try {
+            // Incluindo os produtos do mostruario na lista de produtos da loja
+            for (Produto prod : produtosMostruario) {
+                produtos.add(prod);
+            }
+            // Incluindo os produtos do mostruario no arquivo de produtos da loja
+            dao.salvar(produtos);
+            // Finalizando a importacao
+            System.out.println("Produtos importados com sucesso!");
+            mostrarProdutos();
+        } catch (IOException e) {
+            throw new ImportarMostruarioException();
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    public void mostrarProdutos() {
+        mostrarProdutos(produtos);
     }
 
     public void mostrarProdutos(List<Produto> produtos) {
@@ -171,5 +133,9 @@ public class ProdutoService {
             System.out.println(contador++ + ". " + prod);
         }
         System.out.println("------------------------");
+    }
+
+    public int quantidadeProdutos() {
+        return produtos.size();
     }
 }

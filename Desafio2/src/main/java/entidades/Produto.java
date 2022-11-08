@@ -56,7 +56,7 @@ public class Produto {
                 + String.format("%.2f", preco)
                 + ", estoque: "
                 + qtdEstoque
-                + " , categoria: "
+                + ", categoria: "
                 + categoria;
     }
 }

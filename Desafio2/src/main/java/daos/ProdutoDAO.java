@@ -10,11 +10,11 @@ import java.util.List;
 
 public class ProdutoDAO implements ProdutoDAOInterface {
 
-    private String caminhoAbsoluto = "C:\\Users\\lyene\\OneDrive\\Documentos\\South System\\desafio-qa-modulo2\\produtos.csv"; // Pensar em como fazer para funcionar em outros computadores também
-    private File caminho = new File(caminhoAbsoluto);
+    private String caminhoRelativo = "src\\main\\resources\\produtos.csv";
+    private File caminho = new File(caminhoRelativo);
 
     @Override
-    public void salvar(List<Produto> produtos) {
+    public void salvar(List<Produto> produtos) throws IOException {
 
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(caminho))) {
             for (Produto prod : produtos) {
@@ -24,8 +24,6 @@ public class ProdutoDAO implements ProdutoDAOInterface {
                         + prod.getCategoria());
                 bw.newLine();
             }
-        } catch (IOException e) {
-            System.out.println("Erro: " + e.getMessage());
         }
     }
 
@@ -37,6 +35,8 @@ public class ProdutoDAO implements ProdutoDAOInterface {
         try (CSVReader reader = new CSVReader(new FileReader(caminhoMostruario))) {
             linhas = reader.readAll();
         }
+
+        // Este tratamento so funcionara se o arquivo passado pelo usuario tiver o mesmo padrao dos dados do arquivo que consta no desafio
 
         // Adicionando os produtos do arquivo na lista de produtos do mostruario
         List<Produto> produtosMostruario = new ArrayList<>();
@@ -62,7 +62,7 @@ public class ProdutoDAO implements ProdutoDAOInterface {
     @Override
     public List<Produto> lerProdutos() throws IOException {
 
-        List<Produto> produtosDAO = new ArrayList<>();
+        List<Produto> produtos = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(caminho))) {
             String linha = br.readLine();
@@ -72,10 +72,10 @@ public class ProdutoDAO implements ProdutoDAOInterface {
                 double preco = Double.parseDouble(prod[1]);
                 int qtdEstoque = Integer.parseInt(prod[2]);
                 String categoria = prod[3];
-                produtosDAO.add(new Produto(nome, preco, qtdEstoque, categoria));
+                produtos.add(new Produto(nome, preco, qtdEstoque, categoria));
                 linha = br.readLine();
             }
         }
-        return produtosDAO;
+        return produtos;
     }
 }

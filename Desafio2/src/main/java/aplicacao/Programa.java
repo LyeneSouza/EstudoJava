@@ -1,14 +1,12 @@
 package aplicacao;
 
-import com.opencsv.exceptions.CsvException;
 import entidades.Loja;
 
-import java.io.IOException;
 import java.util.Locale;
 
 public class Programa {
 
-    public static void main(String[] args) throws IOException, CsvException {
+    public static void main(String[] args) {
 
         Locale.setDefault(Locale.US);
 
