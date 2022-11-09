@@ -15,6 +15,12 @@ public class ProdutoBuilder {
         return builder;
     }
 
+    public static ProdutoBuilder umProdutoNulo() {
+        ProdutoBuilder builder = new ProdutoBuilder();
+        builder.produto = null;
+        return builder;
+    }
+
     public Produto agora() {
         return produto;
     }

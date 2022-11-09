@@ -2,6 +2,7 @@ package servicos;
 
 import com.opencsv.exceptions.CsvException;
 import daos.ProdutoDAO;
+import daos.ProdutoDAOInterface;
 import entidades.Produto;
 import exceptions.*;
 
@@ -11,7 +12,7 @@ import java.util.List;
 
 public class ProdutoService {
 
-    private ProdutoDAO dao = new ProdutoDAO();
+    private ProdutoDAOInterface dao = new ProdutoDAO();
 
     private List<Produto> produtos = new ArrayList<>();
 
@@ -48,8 +49,12 @@ public class ProdutoService {
 
     public void editarProduto(int numProduto, Produto produto) throws Exception {
 
-        if (produto == null || numProduto <= 0 || numProduto > produtos.size()) {
+        if (produto == null) {
             throw new EditarProdutoException("Produto inválido.");
+        }
+
+        if (numProduto <= 0 || numProduto > produtos.size()) {
+            throw new EditarProdutoException("Produto não encontrado.");
         }
 
         try {
@@ -73,7 +78,7 @@ public class ProdutoService {
     public void excluirProduto(int numProduto) throws Exception {
 
         if (numProduto <= 0 || numProduto > produtos.size()) {
-            throw new ExcluirProdutoException("Produto inválido.");
+            throw new ExcluirProdutoException("Produto não encontrado.");
         }
 
         try {
