@@ -72,6 +72,7 @@ public class Loja {
                                     confirma = sc.nextLine().toUpperCase().trim();
                                     if (confirma.equals("S")) {
                                         service.adicionarProduto(produto);
+                                        service.mostrarProdutos();
                                         break;
                                     } else if (confirma.equals("N")) {
                                         System.out.println("Inclusão cancelada!");
@@ -109,6 +110,7 @@ public class Loja {
                                     confirma = sc.nextLine().toUpperCase().trim();
                                     if (confirma.equals("S")) {
                                         service.editarProduto(numProduto, produto);
+                                        service.mostrarProdutos();
                                         break;
                                     } else if (confirma.equals("N")) {
                                         System.out.println("Edição cancelada!");
@@ -127,8 +129,8 @@ public class Loja {
                     case 3: // Excluir produto
                         try {
                             service.mostrarProdutos();
-                            if (service.quantidadeProdutos() == 1) { // Mudar para try-catch
-                                System.out.println("Há apenas um produto na lista. Não é possível excluir!");
+                            if (service.quantidadeProdutos() == 1) {
+                                System.out.println("Há apenas um produto na lista. Não é possível excluir.");
                             } else {
                                 int numProduto = 0;
                                 do {
@@ -145,6 +147,7 @@ public class Loja {
                                     confirma = sc.nextLine().toUpperCase().trim();
                                     if (confirma.equals("S")) {
                                         service.excluirProduto(numProduto);
+                                        service.mostrarProdutos();
                                         break;
                                     } else if (confirma.equals("N")) {
                                         System.out.println("Exclusão cancelada!");
@@ -178,6 +181,7 @@ public class Loja {
                                 confirma = sc.nextLine().toUpperCase().trim();
                                 if (confirma.equals("S")) {
                                     service.importarMostruario(produtosMostruario);
+                                    service.mostrarProdutos();
                                     break;
                                 } else if (confirma.equals("N")) {
                                     System.out.println("Importação cancelada!");

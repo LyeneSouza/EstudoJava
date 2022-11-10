@@ -39,7 +39,6 @@ public class ProdutoService {
             dao.salvar(produtos);
             // Finalizando a inclusao
             System.out.println("Produto adicionado com sucesso!");
-            mostrarProdutos();
         } catch (IOException e) {
             throw new AdicionarProdutoException("Não foi possível adicionar o produto. Erro ao salvar no arquivo.");
         } catch (Exception e) {
@@ -67,7 +66,6 @@ public class ProdutoService {
             dao.salvar(produtos);
             // Finalizando a edicao
             System.out.println("Produto editado com sucesso!");
-            mostrarProdutos();
         } catch (IOException e) {
             throw new EditarProdutoException("Não foi possível editar o produto. Erro ao salvar no arquivo.");
         } catch (Exception e) {
@@ -76,6 +74,10 @@ public class ProdutoService {
     }
 
     public void excluirProduto(int numProduto) throws Exception {
+
+        if (produtos.size() == 1) {
+            throw new ExcluirProdutoException("Há apenas um produto na lista. Não é possível excluir.");
+        }
 
         if (numProduto <= 0 || numProduto > produtos.size()) {
             throw new ExcluirProdutoException("Produto não encontrado.");
@@ -88,7 +90,6 @@ public class ProdutoService {
             dao.salvar(produtos);
             // Finalizando a exclusão
             System.out.println("Produto excluído com sucesso!");
-            mostrarProdutos();
         } catch (IOException e) {
             throw new ExcluirProdutoException("Não foi possível excluir o produto. Erro ao salvar no arquivo.");
         } catch (Exception e) {
@@ -117,7 +118,6 @@ public class ProdutoService {
             dao.salvar(produtos);
             // Finalizando a importacao
             System.out.println("Produtos importados com sucesso!");
-            mostrarProdutos();
         } catch (IOException e) {
             throw new ImportarMostruarioException();
         } catch (Exception e) {
