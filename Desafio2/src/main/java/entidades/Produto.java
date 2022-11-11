@@ -7,9 +7,6 @@ public class Produto {
     private int qtdEstoque;
     private String categoria;
 
-    public Produto() {
-    }
-
     public Produto(String nome, double preco, int qtdEstoque, String categoria) {
         this.nome = nome;
         this.preco = preco;

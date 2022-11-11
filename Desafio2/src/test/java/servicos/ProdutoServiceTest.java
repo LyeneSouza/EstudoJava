@@ -6,6 +6,7 @@ import entidades.Produto;
 import exceptions.*;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
+import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -39,6 +40,9 @@ public class ProdutoServiceTest {
 
     @Rule
     public ErrorCollector error = new ErrorCollector();
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
     @Before
     public void setup() {
@@ -76,6 +80,19 @@ public class ProdutoServiceTest {
 
         // Verificacao
         // O teste passa se a excecao esperada for lancada
+    }
+
+    @Test(expected = Exception.class)
+    public void deveLancarExceptionPorQualquerErroInesperadoAoAtualizarListaProdutos() throws Exception {
+
+        // Cenario
+        when(dao.lerProdutos()).thenThrow(new NullPointerException());
+
+        // Acao
+        service.atualizarListaProdutos();
+
+        // Verificacao
+        // Verifica se, no caso de alguma excecao nao esperada vindo da dao, a excecao eh lancada e o programa nao quebra
     }
 
     @Test
@@ -130,6 +147,20 @@ public class ProdutoServiceTest {
         } catch (AdicionarProdutoException e) {
             assertThat(e.getMessage(), is("Não foi possível adicionar o produto. Erro ao salvar no arquivo."));
         }
+    }
+
+    @Test(expected = Exception.class)
+    public void deveLancarExceptionPorQualquerErroInesperadoAoAdicionarProduto() throws Exception {
+
+        // Cenario
+        Produto produto = umProduto().agora();
+        doThrow(new NullPointerException()).when(dao).salvar(Mockito.any(List.class));
+
+        // Acao
+        service.adicionarProduto(produto);
+
+        // Verificacao
+        // Verifica se, no caso de alguma excecao nao esperada vindo da dao, a excecao eh lancada e o programa nao quebra
     }
 
     @Test
@@ -226,6 +257,23 @@ public class ProdutoServiceTest {
         }
     }
 
+    @Test(expected = Exception.class)
+    public void deveLancarExceptionPorQualquerErroInesperadoAoEditarProduto() throws Exception {
+
+        // Cenario
+        Produto produto = umProduto().agora();
+        when(produtos.size()).thenReturn(1);
+        int numProduto = 1;
+
+        doThrow(new NullPointerException()).when(dao).salvar(Mockito.any(List.class));
+
+        // Acao
+        service.editarProduto(numProduto, produto);
+
+        // Verificacao
+        // Verifica se, no caso de alguma excecao nao esperada vindo da dao, a excecao eh lancada e o programa nao quebra
+    }
+
     @Test
     public void deveExcluirProdutoComSucesso() throws IOException {
 
@@ -318,6 +366,22 @@ public class ProdutoServiceTest {
         }
     }
 
+    @Test(expected = Exception.class)
+    public void deveLancarExceptionPorQualquerErroInesperadoAoExcluirProduto() throws Exception {
+
+        // Cenario
+        when(produtos.size()).thenReturn(2);
+        int numProduto = 1;
+
+        doThrow(new NullPointerException()).when(dao).salvar(Mockito.any(List.class));
+
+        // Acao
+        service.excluirProduto(numProduto);
+
+        // Verificacao
+        // Verifica se, no caso de alguma excecao nao esperada vindo da dao, a excecao eh lancada e o programa nao quebra
+    }
+
     @Test
     public void deveLerMostruarioComSucesso() throws Exception {
 
@@ -362,6 +426,20 @@ public class ProdutoServiceTest {
         // O teste passa se a excecao esperada for lancada
     }
 
+    @Test(expected = Exception.class)
+    public void deveLancarExceptionPorQualquerErroInesperadoAoLerMostruario() throws Exception {
+
+        // Cenario
+        String caminho = "caminho";
+        when(dao.lerMostruario(caminho)).thenThrow(new NullPointerException());
+
+        // Acao
+        service.lerMostruario(caminho);
+
+        // Verificacao
+        // Verifica se, no caso de alguma excecao nao esperada vindo da dao, a excecao eh lancada e o programa nao quebra
+    }
+
     @Test
     public void deveImportarMostruarioComSucesso() throws IOException {
 
@@ -395,6 +473,20 @@ public class ProdutoServiceTest {
 
         // Verificacao
         // O teste passa se a excecao esperada for lancada
+    }
+
+    @Test(expected = Exception.class)
+    public void deveLancarExceptionPorQualquerErroInesperadoAoImportarMostruario() throws Exception {
+
+        // Cenario
+        List<Produto> produtosMostruario = Arrays.asList(umProduto().agora(), umProduto().agora());
+        doThrow(new NullPointerException()).when(dao).salvar(Mockito.any(List.class));
+
+        // Acao
+        service.importarMostruario(produtosMostruario);
+
+        // Verificacao
+        // Verifica se, no caso de alguma excecao nao esperada vindo da dao, a excecao eh lancada e o programa nao quebra
     }
 
     @Test

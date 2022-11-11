@@ -9,12 +9,12 @@ import java.util.Scanner;
 public class Loja {
     private ProdutoService service = new ProdutoService();
 
+    private Scanner sc = new Scanner(System.in);
+
     public Loja() {
     }
 
-    public static Produto receberDadosProduto() {
-
-        Scanner sc = new Scanner(System.in);
+    public Produto receberDadosProduto() {
 
         try {
             System.out.print("Nome: ");
@@ -34,7 +34,6 @@ public class Loja {
     }
 
     public void menuLoja() {
-        Scanner sc = new Scanner(System.in);
 
         System.out.println("---------BEM-VINDO(A)---------");
         try {
