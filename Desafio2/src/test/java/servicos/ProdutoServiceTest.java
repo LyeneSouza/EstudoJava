@@ -4,17 +4,19 @@ import com.opencsv.exceptions.CsvException;
 import daos.ProdutoDAOInterface;
 import entidades.Produto;
 import exceptions.*;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
+import org.junit.rules.ErrorCollector;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import static builders.ProdutoBuilder.umProduto;
 import static builders.ProdutoBuilder.umProdutoNulo;
@@ -33,9 +35,20 @@ public class ProdutoServiceTest {
     @Mock
     private ProdutoDAOInterface dao;
 
+    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+
+    @Rule
+    public ErrorCollector error = new ErrorCollector();
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
+        System.setOut(new PrintStream(outContent));
+    }
+
+    @After
+    public void tearDown() throws IOException {
+        outContent.close();
     }
 
     @Test
@@ -70,6 +83,7 @@ public class ProdutoServiceTest {
 
         // Cenario
         Produto produto = umProduto().agora();
+        String expected = "Produto adicionado com sucesso!\r\n";
 
         // Acao
         try {
@@ -79,6 +93,7 @@ public class ProdutoServiceTest {
             Assert.fail();
         }
 
+        error.checkThat(outContent.toString(), is(expected));
         verify(produtos, times(1)).add(produto);
         verify(dao, times(1)).salvar(produtos);
     }
@@ -124,6 +139,7 @@ public class ProdutoServiceTest {
         Produto produto = umProduto().agora();
         when(produtos.size()).thenReturn(1);
         when(produtos.get(0)).thenReturn(umProduto().agora());
+        String expected = "Produto editado com sucesso!\r\n";
 
         // Acao
         try {
@@ -133,6 +149,7 @@ public class ProdutoServiceTest {
             Assert.fail();
         }
 
+        error.checkThat(outContent.toString(), is(expected));
         verify(produtos, times(4)).get(0);
         verify(dao, times(1)).salvar(produtos);
     }
@@ -216,6 +233,7 @@ public class ProdutoServiceTest {
         when(produtos.size()).thenReturn(2);
         when(produtos.get(0)).thenReturn(umProduto().agora());
         int numProduto = 1;
+        String expected = "Produto excluído com sucesso!\r\n";
 
         // Acao
         try {
@@ -225,6 +243,7 @@ public class ProdutoServiceTest {
             Assert.fail();
         }
 
+        error.checkThat(outContent.toString(), is(expected));
         verify(produtos, times(1)).remove(produtos.get(0));
         verify(dao, times(1)).salvar(produtos);
     }
@@ -348,6 +367,7 @@ public class ProdutoServiceTest {
 
         // Cenario
         List<Produto> produtosMostruario = Arrays.asList(umProduto().agora(), umProduto().agora());
+        String expected = "Produtos importados com sucesso!\r\n";
 
         // Acao
         try {
@@ -357,6 +377,7 @@ public class ProdutoServiceTest {
             Assert.fail();
         }
 
+        error.checkThat(outContent.toString(), is(expected));
         verify(produtos, times(1)).add(produtosMostruario.get(0));
         verify(produtos, times(1)).add(produtosMostruario.get(1));
         verify(dao, times(1)).salvar(produtos);
@@ -376,11 +397,22 @@ public class ProdutoServiceTest {
         // O teste passa se a excecao esperada for lancada
     }
 
-    /*@Test
+    @Test
     public void deveMostrarProdutosComSucesso() {
-        // Como testar a impressão na tela???
-        // Precisa testar isso??
-    }*/
+
+        // Cenario
+        Locale.setDefault(Locale.US);
+        produtos = Arrays.asList(umProduto().agora());
+        String expected = "\n--------PRODUTOS--------\r\n" +
+                "1. Produto 1, preço: R$10.00, estoque: 5, categoria: Categoria 1\r\n" +
+                "------------------------\r\n";
+
+        // Acao
+        service.mostrarProdutos(produtos);
+
+        // Verificacao
+        error.checkThat(outContent.toString(), is(expected));
+    }
 
     @Test
     public void deveRetornarQuantidadeProdutosComSucesso() {
