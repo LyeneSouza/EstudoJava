@@ -14,7 +14,7 @@ A loja contém um menu simples a partir do qual é possível adicionar produtos,
 - Git `git version 2.36.1.windows.1`
 - Maven `Apache Maven 3.8.6`
 
-### Como rodar a aplicação e suas dependências ###
+### Como rodar a aplicação e suas dependências via linha de comando ###
 - Fazer o clone do projeto e entrar na respectiva pasta
 ```shell
 cd "diretório de sua preferência"

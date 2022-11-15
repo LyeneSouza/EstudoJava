@@ -11,12 +11,12 @@ import java.util.List;
 public class ProdutoDAO implements ProdutoDAOInterface {
 
     private String caminhoRelativo = "src\\main\\resources\\produtos.csv";
-    private File caminho = new File(caminhoRelativo);
+    private File arquivo = new File(caminhoRelativo);
 
     @Override
     public void salvar(List<Produto> produtos) throws IOException {
 
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(caminho))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(arquivo))) {
             for (Produto prod : produtos) {
                 bw.write(prod.getNome() + ","
                         + String.format("%.2f", prod.getPreco()) + ","
@@ -64,7 +64,7 @@ public class ProdutoDAO implements ProdutoDAOInterface {
 
         List<Produto> produtos = new ArrayList<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(caminho))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(arquivo))) {
             String linha = br.readLine();
             while (linha != null && !linha.equals("")) {
                 String[] prod = linha.split(",");

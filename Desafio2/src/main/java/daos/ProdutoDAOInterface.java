@@ -3,7 +3,6 @@ package daos;
 import com.opencsv.exceptions.CsvException;
 import entidades.Produto;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
