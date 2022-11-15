@@ -41,6 +41,7 @@ public class Loja {
 
             int opcao;
             int numProduto;
+            Produto produto;
             do {
                 try {
                     System.out.println("\n---------MENU---------");
@@ -60,12 +61,16 @@ public class Loja {
 
                 switch (opcao) {
                     case 1: // Adicionar produto
-                        menuAdicionar();
+                        System.out.println("ENTRE COM OS DADOS DO PRODUTO A SER ADICIONADO");
+                        produto = receberDadosProduto();
+                        if (produto != null) {
+                            menuAdicionar(produto);
+                        }
                         break;
                     case 2: // Editar produto
                         numProduto = menuQualProdutoEditar();
                         System.out.println("ENTRE COM OS NOVOS DADOS PARA O PRODUTO " + numProduto);
-                        Produto produto = receberDadosProduto();
+                        produto = receberDadosProduto();
                         if (produto != null) {
                             menuEditar(numProduto, produto);
                         }
@@ -101,11 +106,8 @@ public class Loja {
         sc.close();
     }
 
-    public void menuAdicionar() {
+    public void menuAdicionar(Produto produto) {
         try {
-            System.out.println("ENTRE COM OS DADOS DO PRODUTO A SER ADICIONADO");
-            Produto produto = receberDadosProduto();
-
             if (produto != null) {
                 String confirma = "";
                 while (!confirma.equals("S") || !confirma.equals("N")) {

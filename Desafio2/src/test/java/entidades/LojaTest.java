@@ -1,9 +1,6 @@
 package entidades;
 
-import exceptions.AtualizarListaProdutosException;
-import exceptions.ExcluirProdutoException;
-import exceptions.ImportarMostruarioException;
-import exceptions.LerMostruarioException;
+import exceptions.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -123,16 +120,80 @@ public class LojaTest {
         error.checkThat(outContent.toString(), is(expected));
     }
 
-   /* @Test
-    public void menuAdicionarDeveConcluirComSucesso() {
+    @Test
+    public void menuAdicionarDeveAdicionarComSucesso() throws Exception {
 
         // Cenario
-
+        Produto produto = umProduto().agora();
+        when(sc.nextLine()).thenReturn("S");
+        doNothing().when(service).adicionarProduto(any(Produto.class));
+        doNothing().when(service).mostrarProdutos(any(List.class));
+        String expected = "Confirma a inclusão do produto '" + produto + "' (s/n)? ";
 
         // Acao
+        loja.menuAdicionar(produto);
 
         // Verificacao
-    }*/
+        error.checkThat(outContent.toString(), is(expected));
+        verify(service, times(1)).adicionarProduto(produto);
+        verify(service, times(1)).mostrarProdutos();
+    }
+
+    @Test
+    public void menuAdicionarDeveCancelarAdicao() throws Exception {
+
+        // Cenario
+        Produto produto = umProduto().agora();
+        when(sc.nextLine()).thenReturn("N");
+        String expected = "Confirma a inclusão do produto '" + produto + "' (s/n)? " +
+                "Inclusão cancelada!\r\n";
+
+        // Acao
+        loja.menuAdicionar(produto);
+
+        // Verificacao
+        error.checkThat(outContent.toString(), is(expected));
+        verify(service, never()).adicionarProduto(produto);
+        verify(service, never()).mostrarProdutos();
+    }
+
+    @Test
+    public void menuAdicionarDeveMostrarMsgErroAoReceberAdicionarProdutoException() throws Exception {
+
+        // Cenario
+        Produto produto = umProduto().agora();
+        when(sc.nextLine()).thenReturn("S");
+        doThrow(new AdicionarProdutoException("Não foi possível adicionar o produto. Erro ao salvar no arquivo.")).when(service).adicionarProduto(any(Produto.class));
+        String expected = "Confirma a inclusão do produto '" + produto + "' (s/n)? " +
+                "Não foi possível adicionar o produto. Erro ao salvar no arquivo.\r\n";
+
+        // Acao
+        loja.menuAdicionar(produto);
+
+        // Verificacao
+        error.checkThat(outContent.toString(), is(expected));
+        verify(service, times(1)).adicionarProduto(produto);
+        verify(service, never()).mostrarProdutos();
+    }
+
+    @Test
+    public void menuAdicionarDeveMostrarMsgErroInesperadoAoReceberException() throws Exception {
+
+        // Cenario
+        Produto produto = umProduto().agora();
+        when(sc.nextLine()).thenReturn("S");
+        doThrow(new NullPointerException()).when(service).adicionarProduto(any(Produto.class));
+        String expected = "Confirma a inclusão do produto '" + produto + "' (s/n)? " +
+                "Erro inesperado.\r\n";
+
+        // Acao
+        loja.menuAdicionar(produto);
+
+        // Verificacao
+        error.checkThat(outContent.toString(), is(expected));
+        verify(service, times(1)).adicionarProduto(produto);
+        verify(service, never()).mostrarProdutos();
+    }
 
     @Test
     public void menuQualProdutoEditarDeveRetornarNumProduto() {
@@ -192,25 +253,45 @@ public class LojaTest {
         verify(service, never()).mostrarProdutos();
     }
 
-    /*@Test
-    public void menuEditarDeveMostrarMsgErroAoReceberEditarProdutoException() {
+    @Test
+    public void menuEditarDeveMostrarMsgErroAoReceberEditarProdutoException() throws Exception {
 
         // Cenario
+        int numProduto = 1;
+        Produto produto = umProduto().agora();
+        when(sc.nextLine()).thenReturn("S");
+        doThrow(new EditarProdutoException("Não foi possível editar o produto. Erro ao salvar no arquivo.")).when(service).editarProduto(any(Integer.class), any(Produto.class));
+        String expected = "Confirma a edição do produto " + numProduto + " (s/n)? " +
+                "Não foi possível editar o produto. Erro ao salvar no arquivo.\r\n";
 
         // Acao
+        loja.menuEditar(numProduto, produto);
 
         // Verificacao
+        error.checkThat(outContent.toString(), is(expected));
+        verify(service, times(1)).editarProduto(numProduto, produto);
+        verify(service, never()).mostrarProdutos();
     }
 
     @Test
-    public void menuEditarDeveMostrarMsgErroInesperadoAoReceberException() {
+    public void menuEditarDeveMostrarMsgErroInesperadoAoReceberException() throws Exception {
 
         // Cenario
+        int numProduto = 1;
+        Produto produto = umProduto().agora();
+        when(sc.nextLine()).thenReturn("S");
+        doThrow(new NullPointerException()).when(service).editarProduto(any(Integer.class), any(Produto.class));
+        String expected = "Confirma a edição do produto " + numProduto + " (s/n)? " +
+                "Erro inesperado.\r\n";
 
         // Acao
+        loja.menuEditar(numProduto, produto);
 
         // Verificacao
-    }*/
+        error.checkThat(outContent.toString(), is(expected));
+        verify(service, times(1)).editarProduto(numProduto, produto);
+        verify(service, never()).mostrarProdutos();
+    }
 
     @Test
     public void menuQualProdutoExcluirDeveRetornarNumProduto() {
