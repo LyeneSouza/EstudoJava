@@ -5,13 +5,34 @@ import com.opencsv.exceptions.CsvException;
 import entidades.Produto;
 
 import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProdutoDAO implements ProdutoDAOInterface {
 
-    private String caminhoRelativo = "src\\main\\resources\\produtos.csv";
-    private File arquivo = new File(caminhoRelativo);
+    //private String caminhoRelativo = "src\\main\\resources\\produtos.csv";
+    private File arquivo; //= new File(caminhoRelativo);
+
+    public ProdutoDAO() {
+        try {
+            arquivo = pegarArquivoDoResource("produtos.csv");
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private File pegarArquivoDoResource(String nome) throws URISyntaxException {
+
+        ClassLoader classLoader = getClass().getClassLoader();
+        URL resource = classLoader.getResource(nome); // "Pega" o caminho do arquivo passado por parametro
+        if (resource == null) {
+            throw new IllegalArgumentException("Arquivo não encontrado! " + nome);
+        } else {
+            return new File(resource.toURI());
+        }
+    }
 
     @Override
     public void salvar(List<Produto> produtos) throws IOException {
